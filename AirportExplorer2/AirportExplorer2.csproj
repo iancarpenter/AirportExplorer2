@@ -1,8 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <UserSecretsId>b2214b61-11c4-49cb-9b6e-a61d77eb2469</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="csvhelper" Version="7.1.1" />
+    <PackageReference Include="geojson.net" Version="1.1.64" />
+    <PackageReference Include="googleapi" Version="3.2.10" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
   </ItemGroup>
   <ItemGroup>

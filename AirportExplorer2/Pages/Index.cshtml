@@ -1,108 +1,197 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-        <li data-target="#myCarousel" data-slide-to="3"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/banner1.svg" alt="ASP.NET" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner2.svg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner3.svg" alt="Package Management" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Bring in libraries from NuGet and npm, and automate tasks using Grunt or Gulp.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner4.svg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Airport Explorer</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core Razor Pages</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id='map'></div>
+
+    <div id="info-card" class="absolute pin-t pin-l mt-4 ml-4 rounded shadow-lg bg-white" style="max-width: 400px; display: none;">
+        <div class="overflow-hidden" style="height:200px;">
+            <span class="absolute pin-t pin-r px-4 py-3">
+                <i id="info-card-close-button" class="fa fa-times" role="button" aria-hidden="true"></i>
+            </span>
+            <img id="airport-image" src="http://via.placeholder.com/400x200?text=Loading..." />
+        </div>
+        <div class="px-6 py-4">
+            <div id="airport-name" class="font-bold text-l">Airport Name goes here</div>
+
+            <div id="more-info" class="mt-8">
+                <div class="flex mb-4">
+                    <div class="w-10"><i class="fa fa-map-marker" aria-hidden="true"></i></div>
+                    <div id="airport-address" class="font-medium text-l mb-2 w-full"></div>
+                </div>
+
+                <div class="flex mb-4">
+                    <div class="w-10"><i class="fa fa-phone" aria-hidden="true"></i></div>
+                    <div id="airport-phone" class="font-medium text-l mb-2 w-full"></div>
+                </div>
+
+                <div class="flex mb-4">
+                    <div class="w-10"><i class="fa fa-link" aria-hidden="true"></i></div>
+                    <div id="airport-website" class="font-medium text-l mb-2 w-full"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?linkid=852130">Working with Razor Pages.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure App Service</a></li>
-        </ul>
-    </div>
-</div>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
+    <script>
+    mapboxgl.accessToken = '@Model.MapboxAccessToken';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v9'
+    });
+
+    var nav = new mapboxgl.NavigationControl();
+    map.addControl(nav, 'bottom-right');
+
+    map.on('load',
+        () => {
+            map.addSource("airports",
+                {
+                    type: "geojson",
+                    data: "?handler=airports",
+                    cluster: true, // Enable clustering
+                    clusterRadius: 50, // Radius of each cluster when clustering points
+                    clusterMaxZoom: 6 // Max zoom to cluster points on
+                });
+
+            map.addLayer({
+                id: 'clusters',
+                type: 'circle',
+                source: 'airports',
+                paint: {
+                    'circle-color': {
+                        property: 'point_count',
+                        type: 'interval',
+                        stops: [
+                            [0, '#41A337'],
+                            [100, '#2D7026'],
+                            [750, '#0B5703'],
+                        ]
+                    },
+                    'circle-radius': {
+                        property: 'point_count',
+                        type: 'interval',
+                        stops: [
+                            [0, 20],
+                            [100, 30],
+                            [750, 40]
+                        ]
+                    }
+                }
+            });
+
+            map.addLayer({
+                id: 'cluster-count',
+                type: 'symbol',
+                source: 'airports',
+                filter: ['has', 'point_count'],
+                layout: {
+                    'text-field': '{point_count}',
+                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                    'text-size': 12
+                }
+            });
+
+            map.addLayer({
+                id: 'airport',
+                type: 'circle',
+                source: 'airports',
+                filter: ['!has', 'point_count'],
+                paint: {
+                    'circle-color': '#1EF008',
+                    'circle-radius': 6,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#fff'
+                }
+            });
+
+            // Create a popup, but don't add it to the map yet.
+            var popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: true
+            });
+
+            map.on('mouseenter', 'airport', function (e) {
+                // Change the cursor style as a UI indicator.
+                map.getCanvas().style.cursor = 'pointer';
+
+                // Populate the popup and set its coordinates
+                // based on the feature found.
+                popup.setLngLat(e.features[0].geometry.coordinates)
+                    .setHTML(e.features[0].properties.name)
+                    .addTo(map);
+            });
+
+            map.on('mouseleave', 'airport', function () {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
+
+            map.on('click', 'airport', e => {
+                var name = e.features[0].properties.name;
+                var iataCode = e.features[0].properties.iataCode;
+                var lat = e.features[0].geometry.coordinates[1];
+                var lng = e.features[0].geometry.coordinates[0];
+
+                // Display airport info
+                document.querySelector('#airport-name').innerText = name + " (" + iataCode + ")";
+                document.querySelector('#airport-image').src = 'http://via.placeholder.com/400x200?text=Loading...';
+
+                // Hide more info at first
+                document.querySelector('#more-info').style.display = 'none';
+
+                // Ensure the info box is visible
+                document.querySelector('#info-card').style.display = '';
+
+                fetch(`/?handler=airportdetail&name=${name}&latitude=${lat}&longitude=${lng}`)
+                    .then(blob => blob.json())
+                    .then(data => {
+                        // Set airport properties
+                        if (data.photo)
+                            document.querySelector('#airport-image').src = 'data:image/png;base64,' + data.photo;
+                        else
+                            document.querySelector('#airport-image').src =
+                                'http://via.placeholder.com/400x200?text=No+Image+Found';
+                        document.querySelector('#airport-address').innerText = data.formattedAddress || '-';
+                        document.querySelector('#airport-phone').innerText = data.phoneNumber || '-';
+                        document.querySelector('#airport-website').innerText = data.website || '-';
+
+                        // display more info
+                        document.querySelector('#more-info').style.display = '';
+                    })
+                    .catch(error => {
+                        document.querySelector('#airport-image').src = 'http://via.placeholder.com/400x200?text=Error+while+loading+data';
+                    });
+            });
+        });
+
+        document.querySelector('#info-card-close-button').addEventListener('click', function (event) {
+            document.querySelector('#info-card').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
